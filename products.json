@@ -1,9 +1,0 @@
-{
-  "A103": {
-    "name": "Nike Futbolka",
-    "price": 189000,
-    "image": "A103_1.jpg",
-    "colors": ["Qora", "Oq", "Ko'k"],
-    "sizes": ["S", "M", "L", "XL", "XXL"]
-  }
-}
