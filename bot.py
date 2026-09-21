@@ -42,11 +42,10 @@ PRODUCTS = {
 }
 PRODUCTS = {
     "A101": {
-    "name": "Air",
-    "category": "Erkaklar krasovkasi",
-    "price": 210000,
-    "colors": ["Qora", "Oq", "Ko'k"],
-    "sizes": [39, 40, 41, 42, 43, 44]
+        "name": "Nike air krasofka",
+        "price": 149000,
+        "colors": ["Qora", "Oq"],
+        "sizes": ["39", "40", "41", "42"],
 },
  }
 # ============================================================
