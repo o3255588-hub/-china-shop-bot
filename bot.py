@@ -46,25 +46,39 @@ async def product(message: Message):
         return
 
     # Soni
-    if text.isdigit():
-        order = user_data[message.from_user.id]
-        order["count"] = text
+if text.isdigit():
+    user_data[message.from_user.id]["count"] = text
+    await message.answer("👤 Ismingizni yozing:")
+    user_data[message.from_user.id]["step"] = "name"
 
-        await bot.send_message(
-            ADMIN_ID,
-            f"🛒 YANGI BUYURTMA\n\n"
-            f"📦 {order['name']}\n"
-            f"🎨 Rang: {order['color']}\n"
-            f"📏 O'lcham: {order['size']}\n"
-            f"🔢 Soni: {order['count']}"
-        )
+    # Ism
+if user_data.get(message.from_user.id, {}).get("step") == "name":
+    user_data[message.from_user.id]["name_user"] = text
+    user_data[message.from_user.id]["step"] = "phone"
+    await message.answer("📞 Telefon raqamingizni yozing:")
+    return
 
-        await message.answer(
-            "✅ Buyurtmangiz qabul qilindi!\n\n"
-            "📦 Tovar Xitoydan buyurtma qilinadi.\n"
-            "🚚 Yetib kelgach sizga xabar beramiz."
-        )
-        return
+# Telefon
+if user_data.get(message.from_user.id, {}).get("step") == "phone":
+    order = user_data[message.from_user.id]
+    order["phone"] = text
+
+    await bot.send_message(
+        ADMIN_ID,
+        f"🛒 YANGI BUYURTMA\n\n"
+        f"📦 {order['name']}\n"
+        f"🎨 Rang: {order['color']}\n"
+        f"📏 O'lcham: {order['size']}\n"
+        f"🔢 Soni: {order['count']}\n\n"
+        f"👤 Ism: {order['name_user']}\n"
+        f"📞 Telefon: {order['phone']}"
+    )
+
+    await message.answer(
+        "✅ Buyurtmangiz qabul qilindi!\n\n"
+        "🚚 Tovar kelgach sizga xabar beramiz."
+    )
+    return
 
     # Mahsulot kodi
     code = text.upper()
