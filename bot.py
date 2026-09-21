@@ -1,12 +1,9 @@
 import asyncio
-import csv
-import io
 import logging
 import os
-import time
+import random
 from datetime import datetime
 
-import aiohttp
 from aiohttp import web
 from aiogram import Bot, Dispatcher, F
 from aiogram.filters import CommandStart
@@ -30,12 +27,20 @@ BOT_TOKEN = os.getenv("BOT_TOKEN")
 ADMIN_ID = int(os.getenv("ADMIN_ID", "1717518699"))
 PORT = int(os.getenv("PORT", "10000"))
 
-# Google Jadvalning "Publish to web -> CSV" havolasi.
-# Bu Render'da Environment Variable sifatida SHEET_CSV_URL nomi bilan beriladi.
-SHEET_CSV_URL = os.getenv("SHEET_CSV_URL", "")
+# ============================================================
+#  MAHSULOTLAR BAZASI
+#  Yangi mahsulot qo'shish uchun pastga yana bitta
+#  "KOD": {...} qatorini qo'shing, vergul bilan ajratib.
+# ============================================================
 
-CACHE_TTL_SECONDS = 30  # necha soniyada bir marta jadvalni qayta o'qish
-_cache = {"data": {}, "ts": 0}
+PRODUCTS = {
+    "A103": {
+        "name": "Nike futbolka",
+        "price": 199000,
+        "colors": ["Qora", "Oq"],
+        "sizes": ["M", "X", "XL", "XXL"],
+    },
+}
 
 # ============================================================
 #  HOLATLAR (FSM)
@@ -52,62 +57,16 @@ class Order(StatesGroup):
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
 
-
-# ============================================================
-#  GOOGLE JADVALDAN MAHSULOTLARNI O'QISH
-#  Jadval ustunlari (aynan shu tartibda va nomda bo'lishi kerak):
-#  Kod | Nomi | Narxi | Ranglar | Olchamlar | Rasm
-#  Ranglar va Olchamlar ustunida bir nechta qiymat vergul bilan
-#  ajratiladi, masalan: Qora, Oq
-# ============================================================
+# Ishlatilgan buyurtma raqamlari (takrorlanmasligi uchun)
+used_order_numbers = set()
 
 
-async def load_products():
-    now = time.time()
-    if _cache["data"] and (now - _cache["ts"] < CACHE_TTL_SECONDS):
-        return _cache["data"]
-
-    if not SHEET_CSV_URL:
-        logging.warning("SHEET_CSV_URL sozlanmagan, mahsulotlar bo'sh bo'ladi.")
-        return _cache["data"]
-
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.get(SHEET_CSV_URL, timeout=10) as resp:
-                text = await resp.text()
-    except Exception as e:
-        logging.error(f"Jadvalni o'qishda xatolik: {e}")
-        return _cache["data"]  # eski ma'lumot bilan davom etamiz
-
-    products = {}
-    reader = csv.DictReader(io.StringIO(text))
-    for row in reader:
-        code = (row.get("Kod") or "").strip().upper()
-        if not code:
-            continue
-
-        colors = [c.strip() for c in (row.get("Ranglar") or "").split(",") if c.strip()]
-        sizes = [s.strip() for s in (row.get("Olchamlar") or "").split(",") if s.strip()]
-
-        raw_price = (row.get("Narxi") or "0").replace(" ", "").replace(",", "")
-        try:
-            price = int(raw_price)
-        except ValueError:
-            price = 0
-
-        products[code] = {
-            "name": (row.get("Nomi") or "").strip(),
-            "price": price,
-            "colors": colors or ["Standart"],
-            "sizes": sizes or ["Standart"],
-            "image": (row.get("Rasm") or "").strip(),
-        }
-
-    if products:
-        _cache["data"] = products
-        _cache["ts"] = now
-
-    return _cache["data"]
+def generate_order_number() -> int:
+    while True:
+        number = random.randint(1000000, 9999999)
+        if number not in used_order_numbers:
+            used_order_numbers.add(number)
+            return number
 
 
 # ============================================================
@@ -144,7 +103,7 @@ def format_price(price: int) -> str:
 async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
     await message.answer(
-        "Assalomu aleykum! 👋\n\n"
+        "Assalomu alaykum! 👋\n\n"
         "Kanaldagi mahsulot rasmi ostidagi kodni shu yerga yuboring "
         "(masalan: <b>A103</b>), men sizga buyurtma berishda yordam beraman.",
         parse_mode="HTML",
@@ -155,8 +114,7 @@ async def cmd_start(message: Message, state: FSMContext):
 @dp.message(Order.waiting_code)
 async def handle_code(message: Message, state: FSMContext):
     code = message.text.strip().upper()
-    products = await load_products()
-    product = products.get(code)
+    product = PRODUCTS.get(code)
 
     if not product:
         await message.answer(
@@ -167,43 +125,21 @@ async def handle_code(message: Message, state: FSMContext):
 
     await state.update_data(code=code)
 
-    caption = (
+    text = (
         f"✅ <b>{product['name']}</b>\n"
         f"Narxi: {format_price(product['price'])}\n\n"
         f"Rangni tanlang:"
     )
-
-    if product.get("image"):
-        try:
-            await message.answer_photo(
-                photo=product["image"],
-                caption=caption,
-                parse_mode="HTML",
-                reply_markup=colors_keyboard(product["colors"]),
-            )
-        except Exception as e:
-            logging.error(f"Rasm yuborishda xatolik: {e}")
-            await message.answer(
-                caption, parse_mode="HTML", reply_markup=colors_keyboard(product["colors"])
-            )
-    else:
-        await message.answer(
-            caption, parse_mode="HTML", reply_markup=colors_keyboard(product["colors"])
-        )
-
+    await message.answer(
+        text, parse_mode="HTML", reply_markup=colors_keyboard(product["colors"])
+    )
     await state.set_state(Order.waiting_color)
 
 
 @dp.callback_query(Order.waiting_color, F.data == "back:code")
 async def back_to_code(callback: CallbackQuery, state: FSMContext):
     text = "Kanaldagi mahsulot rasmi ostidagi kodni shu yerga yuboring (masalan: <b>A103</b>):"
-
-    if callback.message.photo:
-        await callback.message.delete()
-        await callback.message.answer(text, parse_mode="HTML")
-    else:
-        await callback.message.edit_text(text, parse_mode="HTML")
-
+    await callback.message.edit_text(text, parse_mode="HTML")
     await state.set_state(Order.waiting_code)
     await callback.answer()
 
@@ -212,14 +148,79 @@ async def back_to_code(callback: CallbackQuery, state: FSMContext):
 async def handle_color(callback: CallbackQuery, state: FSMContext):
     color = callback.data.split(":", 1)[1]
     data = await state.get_data()
-    products = await load_products()
-    product = products.get(data["code"])
+    product = PRODUCTS.get(data["code"])
 
     if not product:
-        await callback.answer("Mahsulot topilmadi, qaytadan urinib ko'ring.", show_alert=True)
+        await callback.answer("Xatolik, /start bosing.", show_alert=True)
         return
 
     await state.update_data(color=color)
 
     text = f"Rang: <b>{color}</b>\n\nEndi o'lchamni tanlang:"
+    await callback.message.edit_text(
+        text, parse_mode="HTML", reply_markup=sizes_keyboard(product["sizes"])
+    )
+    await state.set_state(Order.waiting_size)
+    await callback.answer()
 
+
+@dp.callback_query(Order.waiting_size, F.data == "back:color")
+async def back_to_color(callback: CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    product = PRODUCTS.get(data["code"])
+
+    if not product:
+        await callback.answer("Xatolik, /start bosing.", show_alert=True)
+        return
+
+    text = (
+        f"✅ <b>{product['name']}</b>\n"
+        f"Narxi: {format_price(product['price'])}\n\n"
+        f"Rangni tanlang:"
+    )
+    await callback.message.edit_text(
+        text, parse_mode="HTML", reply_markup=colors_keyboard(product["colors"])
+    )
+    await state.set_state(Order.waiting_color)
+    await callback.answer()
+
+
+@dp.callback_query(Order.waiting_size, F.data.startswith("size:"))
+async def handle_size(callback: CallbackQuery, state: FSMContext):
+    size = callback.data.split(":", 1)[1]
+    await state.update_data(size=size)
+
+    text = f"O'lcham: <b>{size}</b> ✅\n\nEndi telefon raqamingizni yozing (masalan: +998901234567):"
+    await callback.message.edit_text(text, parse_mode="HTML")
+    await state.set_state(Order.waiting_phone)
+    await callback.answer()
+
+
+@dp.message(Order.waiting_phone)
+async def handle_phone(message: Message, state: FSMContext):
+    phone = message.text.strip()
+    data = await state.get_data()
+    product = PRODUCTS.get(data["code"])
+
+    if not product:
+        await message.answer("Xatolik yuz berdi, /start bosib qaytadan urinib ko'ring.")
+        await state.clear()
+        return
+
+    order_number = generate_order_number()
+
+    summary = (
+        f"🛒 <b>Buyurtma tasdiqlandi!</b>\n\n"
+        f"Buyurtma raqami: <b>#{order_number}</b>\n\n"
+        f"Mahsulot: {product['name']}\n"
+        f"Kod: {data['code']}\n"
+        f"Rang: {data['color']}\n"
+        f"O'lcham: {data['size']}\n"
+        f"Narxi: {format_price(product['price'])}\n"
+        f"Telefon: {phone}\n\n"
+        f"Savol bo'lsa, shu raqamni ayting: <b>#{order_number}</b>\n"
+        f"Tez orada operator siz bilan bog'lanadi. Rahmat!"
+    )
+    await message.answer(summary, parse_mode="HTML")
+
+    user = message
