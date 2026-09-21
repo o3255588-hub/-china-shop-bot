@@ -1,3 +1,5 @@
-TOKEN = 8904591770:AAH5kZ9MCg6PmEMgUwSMvEfm8_tc1Nsnk6U
+import os
 
-ADMIN_ID = 1717518699
+TOKEN = os.getenv("TOKEN")
+ADMIN_ID =
+int(os.getenv("ADMIN_ID"))
