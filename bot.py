@@ -40,7 +40,7 @@ PRODUCTS = {
         "sizes": ["M", "X", "XL", "XXL"],
     },
 }
- {
+PRODUCTS = {
     "A101": {
     "name": "Air",
     "category": "Erkaklar krasovkasi",
