@@ -36,6 +36,7 @@ PRODUCTS = {
     "A103": {
         "name": "Nike futbolka",
         "price": 199000,
+        "image": "A103_1.jpg",
         "colors": ["Qora", "Oq"],
         "sizes": ["M", "X", "XL", "XXL"],
     },
