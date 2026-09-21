@@ -144,7 +144,7 @@ def format_price(price: int) -> str:
 async def cmd_start(message: Message, state: FSMContext):
     await state.clear()
     await message.answer(
-        "Assalomu alaykum! 👋\n\n"
+        "Assalomu aleykum! 👋\n\n"
         "Kanaldagi mahsulot rasmi ostidagi kodni shu yerga yuboring "
         "(masalan: <b>A103</b>), men sizga buyurtma berishda yordam beraman.",
         parse_mode="HTML",
