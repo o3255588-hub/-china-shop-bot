@@ -3,7 +3,7 @@ import json
 
 from aiogram import Bot, Dispatcher
 from aiogram.filters import CommandStart
-from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, FSInputFile
 
 from config import TOKEN, ADMIN_ID
 
@@ -77,7 +77,10 @@ async def product(message: Message):
         return
 
     product = products[code]
-
+    photo = 
+    FSInputFile(product["image"])
+    await message.answer_photo(photo)
+    
     user_data[message.from_user.id] = {
         "code": code,
         "name": product["name"]
