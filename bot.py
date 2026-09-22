@@ -1,7 +1,6 @@
 import asyncio
 import logging
 import os
-import random
 from datetime import datetime
 
 from aiohttp import web
@@ -23,14 +22,14 @@ logging.basicConfig(level=logging.INFO)
 #  SOZLAMALAR
 # ============================================================
 
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = os.getenv("BOT_TOKEN")          # Render'da Environment Variable orqali beriladi
 ADMIN_ID = int(os.getenv("ADMIN_ID", "1717518699"))
 PORT = int(os.getenv("PORT", "10000"))
 
 # ============================================================
 #  MAHSULOTLAR BAZASI
-#  Yangi mahsulot qo'shish uchun pastga yana bitta
-#  "KOD": {...} qatorini qo'shing, vergul bilan ajratib.
+#  Yangi mahsulot qo'shish uchun shunchaki pastga yana bitta
+#  "KOD": {...} qatorini qo'shing.
 # ============================================================
 
 PRODUCTS = {
@@ -41,7 +40,14 @@ PRODUCTS = {
         "sizes": ["M", "X", "XL", "XXL"],
     },
 }
-
+PRODUCTS = {
+    "A101": {
+        "name": "Nike air krasofka",
+        "price": 149000,
+        "colors": ["Qora", "Oq"],
+        "sizes": ["39", "40", "41", "42"],
+},
+ }
 # ============================================================
 #  HOLATLAR (FSM)
 # ============================================================
@@ -57,17 +63,6 @@ class Order(StatesGroup):
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
 
-# Ishlatilgan buyurtma raqamlari (takrorlanmasligi uchun)
-used_order_numbers = set()
-
-
-def generate_order_number() -> int:
-    while True:
-        number = random.randint(1000000, 9999999)
-        if number not in used_order_numbers:
-            used_order_numbers.add(number)
-            return number
-
 
 # ============================================================
 #  YORDAMCHI FUNKSIYALAR
@@ -75,19 +70,21 @@ def generate_order_number() -> int:
 
 
 def colors_keyboard(colors):
-    buttons = [
-        [InlineKeyboardButton(text=c, callback_data=f"color:{c}")] for c in colors
-    ]
-    buttons.append([InlineKeyboardButton(text="⬅️ Orqaga", callback_data="back:code")])
-    return InlineKeyboardMarkup(inline_keyboard=buttons)
+    kb = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text=c, callback_data=f"color:{c}")] for c in colors
+        ]
+    )
+    return kb
 
 
 def sizes_keyboard(sizes):
-    buttons = [
-        [InlineKeyboardButton(text=s, callback_data=f"size:{s}")] for s in sizes
-    ]
-    buttons.append([InlineKeyboardButton(text="⬅️ Orqaga", callback_data="back:color")])
-    return InlineKeyboardMarkup(inline_keyboard=buttons)
+    kb = InlineKeyboardMarkup(
+        inline_keyboard=[
+            [InlineKeyboardButton(text=s, callback_data=f"size:{s}")] for s in sizes
+        ]
+    )
+    return kb
 
 
 def format_price(price: int) -> str:
@@ -124,64 +121,29 @@ async def handle_code(message: Message, state: FSMContext):
         return
 
     await state.update_data(code=code)
-
-    text = (
+    await message.answer(
         f"✅ <b>{product['name']}</b>\n"
         f"Narxi: {format_price(product['price'])}\n\n"
-        f"Rangni tanlang:"
-    )
-    await message.answer(
-        text, parse_mode="HTML", reply_markup=colors_keyboard(product["colors"])
+        f"Rangni tanlang:",
+        parse_mode="HTML",
+        reply_markup=colors_keyboard(product["colors"]),
     )
     await state.set_state(Order.waiting_color)
-
-
-@dp.callback_query(Order.waiting_color, F.data == "back:code")
-async def back_to_code(callback: CallbackQuery, state: FSMContext):
-    text = "Kanaldagi mahsulot rasmi ostidagi kodni shu yerga yuboring (masalan: <b>A103</b>):"
-    await callback.message.edit_text(text, parse_mode="HTML")
-    await state.set_state(Order.waiting_code)
-    await callback.answer()
 
 
 @dp.callback_query(Order.waiting_color, F.data.startswith("color:"))
 async def handle_color(callback: CallbackQuery, state: FSMContext):
     color = callback.data.split(":", 1)[1]
     data = await state.get_data()
-    product = PRODUCTS.get(data["code"])
-
-    if not product:
-        await callback.answer("Xatolik, /start bosing.", show_alert=True)
-        return
+    product = PRODUCTS[data["code"]]
 
     await state.update_data(color=color)
-
-    text = f"Rang: <b>{color}</b>\n\nEndi o'lchamni tanlang:"
     await callback.message.edit_text(
-        text, parse_mode="HTML", reply_markup=sizes_keyboard(product["sizes"])
+        f"Rang: <b>{color}</b>\n\nEndi o'lchamni tanlang:",
+        parse_mode="HTML",
+        reply_markup=sizes_keyboard(product["sizes"]),
     )
     await state.set_state(Order.waiting_size)
-    await callback.answer()
-
-
-@dp.callback_query(Order.waiting_size, F.data == "back:color")
-async def back_to_color(callback: CallbackQuery, state: FSMContext):
-    data = await state.get_data()
-    product = PRODUCTS.get(data["code"])
-
-    if not product:
-        await callback.answer("Xatolik, /start bosing.", show_alert=True)
-        return
-
-    text = (
-        f"✅ <b>{product['name']}</b>\n"
-        f"Narxi: {format_price(product['price'])}\n\n"
-        f"Rangni tanlang:"
-    )
-    await callback.message.edit_text(
-        text, parse_mode="HTML", reply_markup=colors_keyboard(product["colors"])
-    )
-    await state.set_state(Order.waiting_color)
     await callback.answer()
 
 
@@ -190,8 +152,11 @@ async def handle_size(callback: CallbackQuery, state: FSMContext):
     size = callback.data.split(":", 1)[1]
     await state.update_data(size=size)
 
-    text = f"O'lcham: <b>{size}</b> ✅\n\nEndi telefon raqamingizni yozing (masalan: +998901234567):"
-    await callback.message.edit_text(text, parse_mode="HTML")
+    await callback.message.edit_text(
+        f"O'lcham: <b>{size}</b> ✅\n\n"
+        f"Endi telefon raqamingizni yozing (masalan: +998901234567):",
+        parse_mode="HTML",
+    )
     await state.set_state(Order.waiting_phone)
     await callback.answer()
 
@@ -200,27 +165,76 @@ async def handle_size(callback: CallbackQuery, state: FSMContext):
 async def handle_phone(message: Message, state: FSMContext):
     phone = message.text.strip()
     data = await state.get_data()
-    product = PRODUCTS.get(data["code"])
-
-    if not product:
-        await message.answer("Xatolik yuz berdi, /start bosib qaytadan urinib ko'ring.")
-        await state.clear()
-        return
-
-    order_number = generate_order_number()
+    product = PRODUCTS[data["code"]]
 
     summary = (
         f"🛒 <b>Buyurtma tasdiqlandi!</b>\n\n"
-        f"Buyurtma raqami: <b>#{order_number}</b>\n\n"
         f"Mahsulot: {product['name']}\n"
         f"Kod: {data['code']}\n"
         f"Rang: {data['color']}\n"
         f"O'lcham: {data['size']}\n"
         f"Narxi: {format_price(product['price'])}\n"
         f"Telefon: {phone}\n\n"
-        f"Savol bo'lsa, shu raqamni ayting: <b>#{order_number}</b>\n"
         f"Tez orada operator siz bilan bog'lanadi. Rahmat!"
     )
+
     await message.answer(summary, parse_mode="HTML")
 
-    user = message
+    # Adminga (sizga) yuborish
+    user = message.from_user
+    admin_text = (
+        f"🆕 <b>Yangi buyurtma</b>\n"
+        f"Vaqt: {datetime.now().strftime('%Y-%m-%d %H:%M')}\n\n"
+        f"Mijoz: {user.full_name} (@{user.username or 'yoq'})\n"
+        f"User ID: {user.id}\n\n"
+        f"Mahsulot: {product['name']}\n"
+        f"Kod: {data['code']}\n"
+        f"Rang: {data['color']}\n"
+        f"O'lcham: {data['size']}\n"
+        f"Narxi: {format_price(product['price'])}\n"
+        f"Telefon: {phone}"
+    )
+    await bot.send_message(ADMIN_ID, admin_text, parse_mode="HTML")
+
+    await state.clear()
+    await message.answer(
+        "Yangi buyurtma berish uchun yana kod yuboring, "
+        "yoki /start bosing."
+    )
+    await state.set_state(Order.waiting_code)
+
+
+@dp.message()
+async def fallback(message: Message, state: FSMContext):
+    current = await state.get_state()
+    if current is None:
+        await message.answer("Boshlash uchun /start bosing.")
+
+
+# ============================================================
+#  RENDER UCHUN MINIMAL WEB SERVER (health check)
+#  Render bepul Web Service PORT'ni tinglashni talab qiladi.
+# ============================================================
+
+
+async def health(request):
+    return web.Response(text="Bot ishlayapti ✅")
+
+
+async def start_web_server():
+    app = web.Application()
+    app.router.add_get("/", health)
+    runner = web.AppRunner(app)
+    await runner.setup()
+    site = web.TCPSite(runner, "0.0.0.0", PORT)
+    await site.start()
+
+
+async def main():
+    await start_web_server()
+    await bot.delete_webhook(drop_pending_updates=True)
+    await dp.start_polling(bot)
+
+
+if __name__ == "__main__":
+    asyncio.run(main())
