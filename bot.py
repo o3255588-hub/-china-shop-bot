@@ -39,14 +39,13 @@ PRODUCTS = {
         "colors": ["Qora", "Oq"],
         "sizes": ["M", "X", "XL", "XXL"],
     },
-}
     "A101": {
         "name": "Nike air krasofka",
         "price": 149000,
         "colors": ["Qora", "Oq"],
         "sizes": ["39", "40", "41", "42"],
-},
- }
+    },
+
     "A104": {
         "name": "Nike kurtka",
         "price": 199000,
