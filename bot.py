@@ -180,7 +180,7 @@ async def handle_phone(message: Message, state: FSMContext):
         f"O'lcham: {data['size']}\n"
         f"Narxi: {format_price(product['price'])}\n"
         f"Telefon: {phone}\n\n"
-        f"Tez orada operator siz bilan bog'lanadi. Rahmat!"
+        f"buyurtmadan (shu xabardan) screenshot olib to`lov qilish uchun @creed0720 ga bog`laning"
     )
 
     await message.answer(summary, parse_mode="HTML")
