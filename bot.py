@@ -40,7 +40,6 @@ PRODUCTS = {
         "sizes": ["M", "X", "XL", "XXL"],
     },
 }
-PRODUCTS = 2 {
     "A101": {
         "name": "Nike air krasofka",
         "price": 149000,
@@ -48,7 +47,6 @@ PRODUCTS = 2 {
         "sizes": ["39", "40", "41", "42"],
 },
  }
-PRODUCTS = 3 {
     "A104": {
         "name": "Nike kurtka",
         "price": 199000,
