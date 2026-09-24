@@ -9,7 +9,7 @@ from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.types import (
+from aiogram.types im9663port (
     Message,
     CallbackQuery,
     InlineKeyboardMarkup,
@@ -35,22 +35,22 @@ PORT = int(os.getenv("PORT", "10000"))
 PRODUCTS = {
     "A103": {
         "name": "Nike futbolka",
-        "price": 199000,
+        "price": 79000,
         "colors": ["Qora", "Oq"],
-        "sizes": ["M", "X", "XL", "XXL"],
+        "sizes": ["M 44-49", "X 49-55", "XL 55-60", "XXL 60-65","3XL 65-70","4XL 70-77.5"],
     },
     "A101": {
-        "name": "Nike air krasofka",
-        "price": 149000,
-        "colors": ["Qora", "Oq"],
-        "sizes": ["39", "40", "41", "42"],
+        "name": "krasofka AIR",
+        "price": 129000,
+        "colors": ["Qora", "Oq","Oq qora aralash"],
+        "sizes": ["36","37","38","39", "40", "41", "42","43","44"],
     },
 
     "A104": {
-        "name": "Nike kurtka",
-        "price": 199000,
-        "colors": ["Qora", "Oq"],
-        "sizes": ["M", "X", "XL", "XXL"],
+        "name": "kurtka",
+        "price": 129000,
+        "colors": ["Qora", "Oq","bardoviy qizil","ko`k","kulrang"],
+        "sizes-kg": ["M 40-47.5", "L 47.5-52.5", "XL52.5-60", "XXL60-67.5" ,"3XL 67.5-75" , "4XL 75-82.5","5XL 82.5-95"],
     },
 }
 # ============================================================
