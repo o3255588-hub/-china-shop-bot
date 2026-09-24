@@ -210,7 +210,7 @@ async def handle_phone(message: Message, state: FSMContext):
     await state.clear()
     await message.answer(
         "Yangi buyurtma berish uchun yana kod yuboring, "
-        "yoki /start bosing."
+        "yoki /start bosing.Kodlarni @xitoy_bazar_uzb shu kanaldan olishingiz mumkin"
     )
     await state.set_state(Order.waiting_code)
 
