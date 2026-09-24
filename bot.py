@@ -9,7 +9,7 @@ from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.types im9663port (
+from aiogram.types import (
     Message,
     CallbackQuery,
     InlineKeyboardMarkup,
