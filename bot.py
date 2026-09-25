@@ -82,11 +82,11 @@ PRODUCTS = {
         "colors": ["qora","jigar"],
         "sizes": ["9.5cmx11.5cm"]
       },
-    "A108": {
-        "name": "Hamyon",
-        "price": 29900,
-        "colors": ["qora","jigar"],
-        "sizes": ["S — 30–40 kg",]
+        "A109": {
+        "name": "Pullover",
+        "price": 104900,
+        "colors": ["qora","oq"],
+        "sizes": ["S — 30–40 kg","M — 40–50 kg","L — 50–60 kg","XL — 60–65 kg","2XL — 65–70 kg","3XL — 70–85 kg","4XL — 85–100 kg","* 5XL — 100 kg+"]
       },
 }
 # ============================================================
