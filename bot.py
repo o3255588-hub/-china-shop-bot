@@ -35,20 +35,20 @@ PORT = int(os.getenv("PORT", "10000"))
 PRODUCTS = {
     "A103": {
         "name": "Nike futbolka",
-        "price": 79000,
+        "price": 79900,
         "colors": ["Qora", "Oq"],
         "sizes": ["M 44-49", "X 49-55", "XL 55-60", "XXL 60-65","3XL 65-70","4XL 70-77.5"],
     },
     "A101": {
         "name": "krasofka AIR",
-        "price": 129000,
+        "price": 129900,
         "colors": ["Qora", "Oq","Oq qora aralash"],
         "sizes": ["36","37","38","39", "40", "41", "42","43","44"],
     },
 
     "A102": {
         "name": "kurtka",
-        "price": 129000,
+        "price": 129900,
         "colors": ["Qora", "Oq","bardoviy qizil","ko`k","kulrang"],
         "sizes": ["M 40-47.5", "L 47.5-52.5", "XL52.5-60", "XXL60-67.5" ,"3XL 67.5-75" , "4XL 75-82.5","5XL 82.5-95"],
     },
@@ -62,12 +62,18 @@ PRODUCTS = {
         "name": "Naushnik",
         "price": 39900,
         "colors": ["Qora", "Oq","Pushti"],
-        "sizes": ["davom etish ✅"]
+        "sizes": ["bo`sh qoladi "]
     },
      "A106": {
         "name": "Soat",
         "price": 99900,
         "colors": ["1", "2","3","4","5","8",],
+        "sizes": ["standart o`cham"]
+    },
+      "A107": {
+        "name": "Kub",
+        "price": 29900,
+        "colors": ["1", "2","3","4"],
         "sizes": ["standart o`cham"]
     },
 }
