@@ -56,7 +56,19 @@ PRODUCTS = {
         "name": "Kosmik proektor",
         "price": 29900,
         "colors": ["Qora", "Oq"],
-        "sizes": ["10"]
+        "sizes": ["10 talik to`plam"]
+    },
+    "A105": {
+        "name": "Naushnik",
+        "price": 39900,
+        "colors": ["Qora", "Oq","Pushti"],
+        "sizes": ["bo`sh qoladi"]
+    },
+     "A106": {
+        "name": "Soat",
+        "price": 99900,
+        "colors": ["1", "2","3","4","5","8",],
+        "sizes": ["standart o`cham"]
     },
 }
 # ============================================================
