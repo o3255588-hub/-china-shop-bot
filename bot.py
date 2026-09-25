@@ -62,7 +62,7 @@ PRODUCTS = {
         "name": "Naushnik",
         "price": 39900,
         "colors": ["Qora", "Oq","Pushti"],
-        "sizes": ["bo`sh qoladi"]
+        "sizes": ["davom etish ✅"]
     },
      "A106": {
         "name": "Soat",
