@@ -100,6 +100,12 @@ PRODUCTS = {
         "colors": ["K-71 Ochiq kulrang", "K-71 Kulrang","K-71 Qora","K-74 Ochiq kulrang","K-74 Qora","K-77 Ochiq kulrang", "K-77 Kulrang","K-77 Qora","K-81 Ochiq kulrang", "K-81 Kulrang","K-81 Qora"],
         "sizes": ["M 47.5-55","L 55-62.5","XL 62.5-70","2XL 70-77.5","3XL 77.5-85","4XL 85-92.5","5XL 92.5-100"]
     },
+"A112": {
+        "name": "Hoodie 'yozuvsiz'",
+        "price": 139900,
+        "colors": ["Qora", "Kulrang"],
+        "sizes": ["M","L","XL","2XL","3XL","4XL","5XL"]
+    },
 }
 # ============================================================
 #  HOLATLAR (FSM)
