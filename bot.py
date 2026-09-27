@@ -74,7 +74,7 @@ PRODUCTS = {
         "name": "Kub",
         "price": 29900,
         "colors": ["1", "2","3","4"],
-        "sizes": ["standart o`cham"]
+        "sizes": ["standart o`cham 8x8x8cm"]
     },
       "A108": {
         "name": "Hamyon",
@@ -88,6 +88,12 @@ PRODUCTS = {
         "colors": ["qora","oq"],
         "sizes": ["S — 30–40 kg","M — 40–50 kg","L — 50–60 kg","XL — 60–65 kg","2XL — 65–70 kg","3XL — 70–85 kg","4XL — 85–100 kg","* 5XL — 100 kg+"]
       },
+ "A110": {
+        "name": "Dvoyka",
+        "price": 149900,
+        "colors": ["Oq", "Kulrang"],
+        "sizes": ["L 50-65","XL 65-75","2XL 75-82.5","3XL 82.5-92.5"]
+    },
 }
 # ============================================================
 #  HOLATLAR (FSM)
