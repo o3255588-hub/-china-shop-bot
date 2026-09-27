@@ -94,6 +94,12 @@ PRODUCTS = {
         "colors": ["Oq", "Kulrang"],
         "sizes": ["L 50-65","XL 65-75","2XL 75-82.5","3XL 82.5-92.5"]
     },
+ "A111": {
+        "name": "Hoodie",
+        "price": 139900,
+        "colors": ["K-71 Oq", "K-71 Kulrang","K-71 Qora","K-74 Oq", "K-74 Kulrang","K-74 Qora","K-77 Oq", "K-77 Kulrang","K-77 Qora","K-81 Oq", "K-81 Kulrang","K-81 Qora"],
+        "sizes": ["M 47.5-55","L 55-62.5","XL 62.5-70","2XL 70-77.5","3XL 77.5-85","4XL 85-92.5","5XL 92.5-100"]
+    },
 }
 # ============================================================
 #  HOLATLAR (FSM)
