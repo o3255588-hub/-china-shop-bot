@@ -107,10 +107,52 @@ PRODUCTS = {
         "sizes": ["M","L","XL","2XL","3XL","4XL","5XL"]
     },
  "A113": {
-        "name": "krasofka",
+        "name": "Krasofka",
         "price": 99900,
         "colors": ["Oq"],
         "sizes": ["36","37","38","39", "40", "41", "42","43"],
+    },
+  "A114": {
+        "name": "Sviter",
+        "price": 119900,
+        "colors": ["Oq","Qora","Yashil","Kulrang"],
+        "sizes": ["M 42.5-52.5","L 52.5-62.5","XL 62.5-72.5","2XL72.5-82.5","3XL 82.5-92.5"],
+    },
+ "A115": {
+        "name": "Mexli sport shimi",
+        "price": 79900,
+        "colors": ["Oq","Qora","Kulrang"],
+        "sizes": ["XL 45-60","2XL 60-65","3XL 65-70","4XL 70-75","5XL 75-80","6XL 80-85"],
+    },
+ "A116": {
+        "name": "Krasofka yugurish uchun",
+        "price": 199900,
+        "colors": ["1","2","3","4","5","6"],
+        "sizes": ["34","35","36","37","38","39", "40", "41", "42","43","44","45"],
+    },
+ "A117": {
+        "name": "Bosh kiyim",
+        "price": 59900,
+        "colors": ["Oq","Qora","Bardoviy qizil","Qaymoq rang","Kulrang"],
+        "sizes": ["standart"],
+    },
+ "A118": {
+        "name": "Kiyim qish uchun",
+        "price": 189900,
+        "colors": ["Oq","Kulrang","Ko`k"],
+        "sizes": ["M 40-50","L 50-60","XL 60-70","2XL 70-80","3XL 80-90","4XL 90-100","5XL 100-110","6XL 110-120","7XL 120-130","8XL 130-140"],
+    },
+ "A119": {
+        "name": "Krasofka qishki",
+        "price": 149900,
+        "colors": ["Qora"],
+        "sizes": ["39", "40", "41", "42","43","44"],
+    },
+ "A120": {
+        "name": "Noutbook uchun sumka",
+        "price": 69900,
+        "colors": ["Qora", "Oq"],
+        "sizes": ["13 dyum","14 dyum","15.6 dyum"],
     },
 }
 # ============================================================
