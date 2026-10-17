@@ -154,6 +154,24 @@ PRODUCTS = {
         "colors": ["Qora", "Oq"],
         "sizes": ["13 dyum","14 dyum","15.6 dyum"],
     },
+"A121": {
+        "name": "--------",
+        "price": -----,
+        "colors": ["Qora", "Oq"],
+        "sizes": ["'"],
+    },
+"A122": {
+        "name": "-------",
+        "price":---,
+        "colors": ["Qora", "Oq"],
+        "sizes": [","],
+    },
+"A123": {
+        "name": "----",
+        "price": -----,
+        "colors": ["Qora", "Oq"],
+        "sizes": [","],
+    },
 }
 # ============================================================
 #  HOLATLAR (FSM)
